@@ -1,0 +1,18 @@
+# Run with the command:
+# pip install -r requirements.txt
+# pip install -r doc/requirements.txt
+
+
+
+peewee
+
+tornado
+
+
+
+pyyaml
+
+nose
+requests
+
+# celery
