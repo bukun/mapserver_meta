@@ -9,7 +9,7 @@ from .script_init_tabels import run_init_tables
 from mapmeta.model.mapmeta_model import MMapMeta
 
 
-def do_for_raster(mapserver_ip):
+def do_for_vector(mapserver_ip):
     '''
     代码来自 `maplet_arch//030_gen_mapproxy.py` ， 原用来找到 mapfile ， 生成 yaml .
     '''
@@ -32,16 +32,13 @@ def do_for_raster(mapserver_ip):
                 layer='maplet_' + maplet_uid,
             )
             xml = requests.get(mapurl)
-            print('=' * 20)
-            print(maplet_uid)
-            print(mapurl)
-            print(xml.text)
+
             mapinfo = {
                 'uid': maplet_uid,
                 'url': mapurl,
                 'meta': xml.text
             }
-            MMapMeta.add_meta(mapinfo)
+            MMapMeta.add_or_update(mapinfo)
 
 
 def run_init(*args):
@@ -50,4 +47,4 @@ def run_init(*args):
     :return:
     '''
     run_init_tables()
-    do_for_raster('121.42.29.253')
+    do_for_vector('121.42.29.253')

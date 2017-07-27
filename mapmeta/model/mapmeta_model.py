@@ -43,13 +43,13 @@ class MMapMeta(Mabc):
         entry.execute()
 
     @staticmethod
-    def add_or_update(uid, post_data):
+    def add_or_update( post_data):
         '''
         :param uid:
         :param post_data:
         :return:
         '''
-
+        uid = post_data['uid']
         cur_rec = MMapMeta.get_by_uid(uid)
         if cur_rec:
             MMapMeta.update(uid, post_data)
