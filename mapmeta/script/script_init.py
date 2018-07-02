@@ -7,6 +7,7 @@ import os
 import requests
 from .script_init_tabels import run_init_tables
 from mapmeta.model.mapmeta_model import MMapMeta
+from lxml import etree
 
 def do_for_maplet(mapserver_ip):
     '''
@@ -29,15 +30,45 @@ def do_for_maplet(mapserver_ip):
                 layer='maplet_' + maplet_uid,
             )
             print(mapurl)
-            xml = requests.get(mapurl)
-
-
+            # xml = requests.get(mapurl)
+            lyr_meta = get_meta(mapurl, maplet_uid)
             mapinfo = {
                 'uid': maplet_uid,
                 'url': mapurl,
-                'meta': xml.text
+                'meta': lyr_meta
             }
             MMapMeta.add_or_update(mapinfo)
+def get_meta(url, sig):
+    uu = requests.get(url)
+    uu.encoding='utf-8'
+
+    uu.encoding
+
+    xml_text = uu.text
+
+    xml_text2 = xml_text.encode('utf-8')
+    root = etree.XML(xml_text2) # xml_text 为xml纯文本文件
+
+    root.tag
+
+
+
+    namespace = "{http://www.opengis.net/wms}"
+
+    uu = root.findall('.//{0}Layer'.format(namespace))
+    bb = ''
+    for x in uu:
+    #     print(x.tag)
+    #     print(x.attrib)
+
+        tt = x.find('.//{0}Name'.format(namespace))
+
+        # tt = x.getroottree()
+        sig_arr = tt.text.split('_')
+
+        if sig_arr[-1] == sig:
+            bb= etree.tostring(x,  pretty_print=True).decode()
+    return bb
 
 
 def do_for_vector(mapserver_ip):
@@ -63,12 +94,18 @@ def do_for_vector(mapserver_ip):
                 layer='maplet_' + maplet_uid,
             )
             print(mapurl)
-            xml = requests.get(mapurl)
 
+
+            # print(the_html)
+            #for uu in the_html.iter():
+            #    print(uu.tag)
+
+
+            lyr_meta = get_meta(mapurl, maplet_uid)
             mapinfo = {
                 'uid': maplet_uid,
                 'url': mapurl,
-                'meta': xml.text
+                'meta': lyr_meta
             }
             MMapMeta.add_or_update(mapinfo)
 
@@ -80,5 +117,5 @@ def run_init(*args):
     '''
     run_init_tables()
     do_for_vector('121.42.29.253')
-    # do_for_maplet('121.42.29.253')
+    do_for_maplet('121.42.29.253')
 
